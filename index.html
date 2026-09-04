@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entropic</title>
+<meta name="description" content="A private journal for psychedelic experiences. Everything you record stays on your phone.">
+<!-- Smart App Banner: uncomment once the App Store id exists.
+<meta name="apple-itunes-app" content="app-id=APP_ID_HERE"> -->
+<style>
+  /* Entropic commits to one visual world: the app is dark only, and so is this page. */
+  :root {
+    --bg: #0A0A0C;
+    --ivory: #F2EDE3;
+    --ivory-dim: rgba(242, 237, 227, 0.62);
+    --ivory-faint: rgba(242, 237, 227, 0.38);
+    --gold: #C8A97E;
+    --gold-bright: #E8D1AE;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ivory);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .hero {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 34px 24px 24px;
+  }
+  #dust {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero > *:not(#dust) { position: relative; pointer-events: none; }
+
+  .wordmark {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.42em; /* the one wide-tracking brand moment */
+    color: var(--ivory-dim);
+    margin: 0;
+  }
+  .space { flex: 1.55; }
+  .space-end { flex: 0.65; }
+
+  h1 {
+    font-size: clamp(30px, 6vw, 46px);
+    font-weight: 650;
+    line-height: 1.14;
+    letter-spacing: -0.015em;
+    margin: 0 auto 28px;
+    max-width: 15ch;
+    text-wrap: balance;
+  }
+  /* A soft veil behind the words: the dust blurs and dims there, feathered
+     so no rectangle ever shows. */
+  /* z-index: 0 makes .copy a stacking context, so the -1 pseudo stays inside
+     it and paints over the canvas instead of escaping behind it. */
+  .copy { position: relative; z-index: 0; }
+  .copy::before {
+    content: "";
+    position: absolute;
+    inset: -64px -90px;
+    z-index: -1;
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    background: rgba(10, 10, 12, 0.24);
+    -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 35%, transparent 100%);
+  }
+
+  .store {
+    display: inline-block;
+    pointer-events: auto;
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+    color: #17130C;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 15px 30px;
+    border-radius: 999px;
+  }
+  .store:hover { filter: brightness(1.05); }
+  .store:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <canvas id="dust" aria-hidden="true"></canvas>
+  <p class="wordmark">ENTROPIC</p>
+  <div class="space"></div>
+  <div class="copy">
+    <h1>A private journal for psychedelic experiences.</h1>
+    <a class="store" href="#" aria-label="Download Entropic on the App Store">Download on the App Store</a>
+  </div>
+  <div class="space-end"></div>
+</header>
+
+<script>
+// Virgil, embodied: dust that assembles into his ring, breathes, turns
+// slowly, and yields a little when you come close.
+(function () {
+  const canvas = document.getElementById("dust");
+  const ctx = canvas.getContext("2d");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let w, h, cx, cy, radius, particles;
+  const pointer = { x: -9999, y: -9999 };
+
+  function seedRandom(seed) {
+    return function () {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    };
+  }
+
+  function build() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx = w / 2; cy = h * 0.42;
+    radius = Math.min(w * 0.36, h * 0.23);
+    const rand = seedRandom(3719);
+    particles = [];
+    for (let i = 0; i < 1700; i++) {
+      const angle = rand() * Math.PI * 2;
+      const band = (rand() + rand()) / 2;             // denser mid-ring
+      const scatterAngle = rand() * Math.PI * 2;
+      const reach = (0.3 + rand()) * radius * 3.4;
+      particles.push({
+        angle: angle,
+        r: radius * (0.8 + band * 0.42),
+        sx: cx + Math.cos(scatterAngle) * reach,      // scattered start
+        sy: cy + Math.sin(scatterAngle) * reach,
+        size: 0.4 + rand() * 1.5,
+        tone: rand(),
+        drift: rand() * Math.PI * 2,
+        wob: 2 + rand() * 3.5,
+        delay: (angle / (Math.PI * 2)) * 0.45 + rand() * 0.15
+      });
+    }
+  }
+
+  function ease(x) { return x < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x); }
+
+  function draw(now) {
+    const t = now / 1000;
+    const assemble = reduced ? 1 : Math.min(1, t / 2.4);
+    const breath = reduced ? 1 : 1 + 0.035 * Math.sin(t * 0.55);   // a slow breath
+    const turn = reduced ? 0 : t * 0.014;                          // an imperceptible turn
+    ctx.clearRect(0, 0, w, h);
+    for (const p of particles) {
+      const settle = ease((assemble - p.delay) / 0.55);
+      const a = p.angle + turn;
+      let hx = cx + Math.cos(a) * p.r * breath;
+      let hy = cy + Math.sin(a) * p.r * breath * 0.94;
+      if (!reduced) {
+        hx += Math.sin(t * 0.5 + p.drift) * p.wob;
+        hy += Math.cos(t * 0.4 + p.drift) * p.wob * 0.8;
+      }
+      let x = p.sx + (hx - p.sx) * settle;
+      let y = p.sy + (hy - p.sy) * settle;
+
+      // He notices you: the dust near the pointer yields and brightens.
+      let glow = 0;
+      if (!reduced) {
+        const dx = x - pointer.x, dy = y - pointer.y;
+        const d2 = dx * dx + dy * dy;
+        const near = 150;
+        if (d2 < near * near) {
+          const d = Math.sqrt(d2) || 1;
+          const force = (1 - d / near);
+          const push = force * force * 26;
+          x += (dx / d) * push;
+          y += (dy / d) * push;
+          glow = force * 0.45;
+        }
+      }
+
+      const alpha = 0.12 + settle * (0.15 + p.tone * 0.5) + glow;
+      ctx.fillStyle = p.tone > 0.72
+        ? "rgba(242, 237, 227, " + Math.min(alpha, 0.95) + ")"
+        : "rgba(200, 169, 126, " + Math.min(alpha * 0.92, 0.9) + ")";
+      ctx.beginPath();
+      ctx.arc(x, y, p.size + glow * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (!reduced) requestAnimationFrame(draw);
+  }
+
+  addEventListener("pointermove", function (e) { pointer.x = e.clientX; pointer.y = e.clientY; });
+  addEventListener("pointerleave", function () { pointer.x = -9999; pointer.y = -9999; });
+  build();
+  addEventListener("resize", build);
+  requestAnimationFrame(draw);
+})();
+</script>
+
+</body>
+</html>
