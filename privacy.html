@@ -20,22 +20,29 @@
 <body>
 <main>
   <h1>Privacy policy</h1>
-  <p class="date">Entropic for iOS. Last updated September 3, 2026.</p>
+  <p class="date">Entropic for iOS. Last updated September 6, 2026.</p>
 
-  <p>Entropic is a private journal. This page describes what the app does with what you record, in plain terms. The short version is that your journal stays on your phone, and the developer never receives it.</p>
+  <p>Entropic is a private journal. This page describes what the app does with what you record, in plain terms. The short version is that your journal is stored on your phone and the developer never receives it, with one exception described below: when you ask Virgil a question about your journal, the excerpts the app selects are sent to the developer's service and to OpenAI to write the answer.</p>
 
   <h2>What the app stores</h2>
   <p>Everything you record in Entropic, including experiences, notes, voice recordings and their transcripts, moods, reflections, check-ins, memos, intakes, and anything the companion writes, is stored in a database on your device. The app keeps this data inside its own protected container, which iOS encrypts along with the rest of your phone.</p>
 
   <h2>What leaves your phone</h2>
-  <p>Nothing is sent to the developer or to any third party. Entropic has no accounts, no servers, and no analytics. The app does not collect usage data, crash reports, identifiers, or location.</p>
+  <p>Apart from the journal questions described below, nothing is sent to the developer or to any third party. Entropic has no accounts and no analytics. The app does not collect usage data, crash reports, identifiers, or location.</p>
   <p>Two Apple services are used, and only Apple sees that traffic. Purchases go through the App Store. If you turn on iCloud sync, a copy of your journal is written to the private area of your own iCloud account, where Apple encrypts it; the developer has no access to that copy. iCloud sync is off unless you turn it on.</p>
 
   <h2>Voice and transcription</h2>
   <p>Voice notes are recorded only when you start a recording. Transcription happens on the device using Apple's speech recognition, and the audio is not uploaded. If on-device transcription is not available for your language, the recording stays as audio.</p>
 
   <h2>The companion</h2>
-  <p>Virgil, the companion in Entropic Plus, runs on the device using Apple Intelligence on phones that support it. It reads only what you have recorded in the app and does not send your entries anywhere.</p>
+  <p>Virgil, the companion in Entropic Plus, reads only what you have recorded in the app. Check-ins during an experience, listening replies, and the morning letter are written on the device using Apple Intelligence on phones that support it, and nothing leaves the phone for them. Answers to questions you ask about your journal are written through the developer's service, as described next.</p>
+
+  <h2>Questions about your journal</h2>
+  <p>Entropic Plus includes a conversation called "Ask your journal". Answers in it are written by a model run by OpenAI, through a service the developer runs on Cloudflare. This is the only way those answers are written. Measured mood comparisons and questions on an empty or one-entry journal are answered by code on your phone and nothing is sent for them. Nothing is sent until you send a question, nothing is sent in the background, and nothing is sent while an experience is running. The app explains this in Settings and on the conversation screen, and using the conversation is how you agree to it.</p>
+  <p>When you send a question, the app sends the question, journal excerpts it selects, the mood facts it computes, and up to six recent messages from that conversation to the developer's service. The excerpts are the entry you name or your latest entry, or otherwise up to three entries chosen by matching words, and the three most recent entries when the question names nothing. The mood facts summarize the before and after ratings across all your experiences. The service passes that text to OpenAI, which writes the reply with its GPT model. The app also sends a signed record of your Plus purchase from the App Store so the service can verify the purchase with Apple and count your allowance.</p>
+  <p>The service does not store your questions or the replies, and the developer does not read them. It keeps a one-way code derived from the purchase record together with the count of answers used, the purchase's transaction number and its App Store status for up to five minutes, and the times of your recent requests for up to a day, to enforce limits. Cloudflare handles the connection and sees your network address, as any host does; the service does not store it. No name, account, or device identifier is sent.</p>
+  <p>Journal excerpts can contain sensitive things you wrote. OpenAI processes them under its API terms and <a href="https://openai.com/policies/privacy-policy/">privacy policy</a>. Under those terms, API inputs and outputs are not used to train OpenAI's models and are generally retained for up to 30 days for abuse monitoring, and longer where the law requires. The developer cannot promise that nothing is retained.</p>
+  <p>Answers never include audio or your trusted contact, and entries beyond the selected ones are not sent. Each subscription includes 100 answers per calendar month, and a lifetime purchase includes 100 in total, which do not renew. Nothing beyond the purchase is charged. When the allowance is used up, questions are declined until it resets, and the journal lookup in the same screen keeps working on the phone.</p>
 
   <h2>Reminders and the trusted contact</h2>
   <p>Reminders are local notifications scheduled on your phone; their text never describes what you recorded. If you add someone you trust, their name and number are stored on your device only, and a message to them opens in the Messages app for you to send yourself. Entropic never sends anything on your behalf.</p>
